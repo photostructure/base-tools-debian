@@ -15,6 +15,10 @@ FROM node:16-bullseye-slim as builder
 # performance might be fractionally faster if we left these with dynamic
 # links.
 
+# Note that libjpeg62, liblcms2, and liborc dev dependencies are used in the
+# first build stage which starts from this image. By installing them here,
+# that stage doesn't need to muck with `apt`.
+
 RUN apt-get update \
   && apt-get upgrade -y \
   && apt-get install -y \
@@ -25,6 +29,7 @@ RUN apt-get update \
   git \
   libjpeg62-turbo-dev \
   liblcms2-dev \
+  liborc-0.4-dev \
   libtool \
   pkg-config \
   unzip \
@@ -33,7 +38,7 @@ RUN apt-get update \
   
 RUN git clone https://github.com/LibRaw/LibRaw.git /tmp/libraw \
   && cd /tmp/libraw \
-  && git checkout --force a5a5fb16936f0d3da0ea2ee92e43f508921c121a \
+  && git checkout --force b7771a8e4c01851f7674146e47f7a460633f5e99 \
   && autoreconf -fiv \
   && ./configure --enable-static --disable-lcms --disable-openmp \
   && make -j `nproc` \
