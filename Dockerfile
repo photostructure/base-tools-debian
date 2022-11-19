@@ -34,20 +34,19 @@ RUN apt-get update \
   pkg-config \
   unzip \
   zlib1g-dev \
-  && rm -rf /var/lib/apt/lists/*
-  
-RUN git clone https://github.com/LibRaw/LibRaw.git /tmp/libraw \
+  && rm -rf /var/lib/apt/lists/* \
+  && npm install --force --location=global npm yarn \
+  && mkdir -p /ps/app/tools \
+  && git clone https://github.com/LibRaw/LibRaw.git /tmp/libraw \
   && cd /tmp/libraw \
   && git checkout --force b7771a8e4c01851f7674146e47f7a460633f5e99 \
   && autoreconf -fiv \
-  && ./configure --enable-static --disable-lcms --disable-openmp \
+  && ./configure --prefix=/ps/app/tools \
   && make -j `nproc` \
-  && /bin/bash ./libtool --tag=CXX --mode=link g++ -all-static -g -O2 -o bin/dcraw_emu samples/bin_dcraw_emu-dcraw_emu.o lib/libraw.la -ljpeg -lz -lm \
-  && /bin/bash ./libtool --tag=CXX --mode=link g++ -all-static -g -O2 -o bin/raw-identify samples/bin_raw_identify-raw-identify.o lib/libraw.la -ljpeg -lz -lm \
-  && mkdir -p /ps/app/tools/bin \
-  && strip bin/dcraw_emu \
-  && strip bin/raw-identify \
-  && cp -p bin/dcraw_emu bin/raw-identify /ps/app/tools/bin \
+  && make install \
+  && rm $(find /ps/app/tools -type f | grep -vE "libraw.so|dcraw_emu|raw-identify") \
+  && rmdir -p --ignore-fail-on-non-empty $(find /ps/app/tools -type d) \ 
+  && strip /ps/app/tools/bin/* \
   && rm -rf /tmp/libraw
   
 RUN mkdir -p /tmp/sqlite \
@@ -59,6 +58,10 @@ RUN mkdir -p /tmp/sqlite \
   && cp -p sqlite3 /ps/app/tools/bin \
   && rm -rf /tmp/sqlite
 
-# Stripped LibRaw and SQLite binaries should now be sitting in /ps/app/tools/bin.
+# Note: fully static binaries would be a bit more portable, but installing
+# libjpeg isn't that big of a deal.
+
+# Stripped LibRaw and SQLite binaries should now be sitting in
+# /ps/app/tools/bin.
 
 # docker build -t photostructure/base-glibc-tools .
