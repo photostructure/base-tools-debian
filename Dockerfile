@@ -4,8 +4,8 @@
 # <https://photostructure.com/server/photostructure-for-docker/>
 
 # https://hub.docker.com/_/node/
-# TODO: migrate to lts-slim (Node 18)
-FROM node:16-bullseye-slim as builder
+# "18-bullseye" was an alias for "lts-slim" on 2022-11-28
+FROM node:18-bullseye-slim as builder
 
 # 202208: We're building libraw and SQLite here to pick up the latest bugfixes.
 
@@ -39,7 +39,7 @@ RUN apt-get update \
   && mkdir -p /ps/app/tools \
   && git clone https://github.com/LibRaw/LibRaw.git /tmp/libraw \
   && cd /tmp/libraw \
-  && git checkout --force 42a95f09b47b13f6b118a75d67cb47c12805b5f4 \
+  && git checkout --force a5a5fb16936f0d3da0ea2ee92e43f508921c121a \
   && autoreconf -fiv \
   && ./configure --prefix=/ps/app/tools \
   && make -j `nproc` \

@@ -34,7 +34,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4.1.1
         with:
-          images: photostructure/base-glibc-tools,ghcr.io/photostructure/base-glibc-tools
+          images: photostructure/base-tools-debian,ghcr.io/photostructure/base-tools-debian
           tags: |
             type=ref,event=branch
             type=ref,event=tag
