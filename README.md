@@ -4,7 +4,9 @@ Howdy!
 
 This repository builds the base docker image used by [PhotoStructure for
 Docker](https://photostructure.com/server/photostructure-for-docker/) with a
-Debian (rather than Alpine) base image.
+Debian (rather than Alpine) base image. [The
+Alpine-based base image is
+here.](https://github.com/photostructure/base-tools)
 
 Using this base image has a bunch of pros and cons:
 
