@@ -4,8 +4,8 @@
 # <https://photostructure.com/server/photostructure-for-docker/>
 
 # https://hub.docker.com/_/node/
-# "18-bullseye" was an alias for "lts-slim" on 2022-11-28
-FROM node:18-bullseye-slim as builder
+# "18-bullseye" was an alias for "lts-slim" on 2022-11-28. node 20 will become LTS in 2023.
+FROM node:20-bullseye-slim as builder
 
 # 202208: We're building libraw and SQLite here to pick up the latest bugfixes.
 
@@ -39,7 +39,7 @@ RUN apt-get update \
   && mkdir -p /opt/photostructure/tools \
   && git clone https://github.com/LibRaw/LibRaw.git /tmp/libraw \
   && cd /tmp/libraw \
-  && git checkout --force a5a5fb16936f0d3da0ea2ee92e43f508921c121a \
+  && git checkout --force 6fffd414bfda63dfef2276ae07f7ca36660b8888 \
   && autoreconf -fiv \
   && ./configure --prefix=/opt/photostructure/tools \
   && make -j `nproc` \
@@ -47,11 +47,10 @@ RUN apt-get update \
   && rm $(find /opt/photostructure/tools -type f | grep -vE "libraw.so|dcraw_emu|raw-identify") \
   && rmdir -p --ignore-fail-on-non-empty $(find /opt/photostructure/tools -type d) \ 
   && strip /opt/photostructure/tools/bin/* \
-  && rm -rf /tmp/libraw
-  
-RUN mkdir -p /tmp/sqlite \
+  && rm -rf /tmp/libraw \
+  && mkdir -p /tmp/sqlite \
   && cd /tmp/sqlite \
-  && curl https://sqlite.org/2022/sqlite-autoconf-3400000.tar.gz | tar -xz --strip 1 \
+  && curl https://sqlite.org/2023/sqlite-autoconf-3420000.tar.gz | tar -xz --strip 1 \
   && ./configure --enable-static --enable-readline \
   && make -j `nproc` \
   && strip sqlite3 \
