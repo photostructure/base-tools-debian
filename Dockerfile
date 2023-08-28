@@ -32,6 +32,7 @@ RUN apt-get update \
   liborc-0.4-dev \
   libtool \
   pkg-config \
+  python3 \
   unzip \
   zlib1g-dev \
   && rm -rf /var/lib/apt/lists/* \
@@ -62,5 +63,3 @@ RUN apt-get update \
 
 # Stripped LibRaw and SQLite binaries should now be sitting in
 # /opt/photostructure/tools/bin.
-
-# docker build -t photostructure/base-glibc-tools .
