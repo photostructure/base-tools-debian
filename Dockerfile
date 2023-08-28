@@ -4,7 +4,6 @@
 # <https://photostructure.com/server/photostructure-for-docker/>
 
 # https://hub.docker.com/_/node/
-# "18-bullseye" was an alias for "lts-slim" on 2022-11-28. node 20 will become LTS in 2023.
 FROM node:20-bookworm-slim as builder
 
 # 202208: We're building libraw and SQLite here to pick up the latest bugfixes.
