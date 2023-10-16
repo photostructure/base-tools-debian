@@ -39,7 +39,7 @@ RUN apt-get update \
   && mkdir -p /opt/photostructure/tools \
   && git clone https://github.com/LibRaw/LibRaw.git /tmp/libraw \
   && cd /tmp/libraw \
-  && git checkout --force a14574080aa902fa8d6a982adc169429610bd3ea \
+  && git checkout --force 41506ef73e33c5e0c3b94608cce2481d92003d5d \
   && autoreconf -fiv \
   && ./configure --prefix=/opt/photostructure/tools \
   && make -j `nproc` \
@@ -50,7 +50,7 @@ RUN apt-get update \
   && rm -rf /tmp/libraw \
   && mkdir -p /tmp/sqlite \
   && cd /tmp/sqlite \
-  && curl https://sqlite.org/2023/sqlite-autoconf-3420000.tar.gz | tar -xz --strip 1 \
+  && curl https://sqlite.org/2023/sqlite-autoconf-3430200.tar.gz | tar -xz --strip 1 \
   && ./configure --enable-static --enable-readline \
   && make -j `nproc` \
   && strip sqlite3 \
