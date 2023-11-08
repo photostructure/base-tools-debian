@@ -6,10 +6,6 @@
 # https://hub.docker.com/_/node/
 FROM node:20-bookworm-slim as builder
 
-# These confuse my users. We don't need them. This is how you delete ENVs:
-ENV NODE_VERSION=
-ENV YARN_VERSION=
-
 # 202208: We're building libraw and SQLite here to pick up the latest bugfixes.
 
 # We're building static binaries here so we can skip installing the .so
