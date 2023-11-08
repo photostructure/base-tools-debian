@@ -6,6 +6,10 @@
 # https://hub.docker.com/_/node/
 FROM node:20-bookworm-slim as builder
 
+# These confuse my users. We don't need them. This is how you delete ENVs:
+ENV NODE_VERSION=
+ENV YARN_VERSION=
+
 # 202208: We're building libraw and SQLite here to pick up the latest bugfixes.
 
 # We're building static binaries here so we can skip installing the .so
@@ -50,7 +54,7 @@ RUN apt-get update \
   && rm -rf /tmp/libraw \
   && mkdir -p /tmp/sqlite \
   && cd /tmp/sqlite \
-  && curl https://sqlite.org/2023/sqlite-autoconf-3430200.tar.gz | tar -xz --strip 1 \
+  && curl https://sqlite.org/2023/sqlite-autoconf-3440000.tar.gz | tar -xz --strip 1 \
   && ./configure --enable-static --enable-readline \
   && make -j `nproc` \
   && strip sqlite3 \
