@@ -30,6 +30,8 @@ jobs:
             photostructure/base-tools-debian
             ghcr.io/photostructure/base-tools-debian
           tags: |
+            # minimal git SHA tag
+            type=sha
             type=ref,event=branch
             type=ref,event=tag
             type=raw,value=latest,enable={{is_default_branch}}
