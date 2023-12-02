@@ -25,6 +25,10 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
+          labels: |
+            org.opencontainers.image.title="PhotoStructure base tools"
+            org.opencontainers.image.description="This image is used to compile native dependencies used by the PhotoStructure for Docker image"
+            org.opencontainers.image.documentation="https://photostructure.com/server/photostructure-for-docker/"
           images: |
             photostructure/base-tools-debian
             ghcr.io/photostructure/base-tools-debian
