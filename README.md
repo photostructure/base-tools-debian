@@ -14,7 +14,7 @@ Pros:
 
 - There are many more `ffmpeg` codecs installed in the Debian image, so more video and audio formats are supported, but they seem to be mostly archaic.
 
-- Some external tools are only compatible with Debian/glibc. For example, CUDA hardware accelleration may be easier on Debian than on Alpine.
+- Some external tools are only compatible with Debian/glibc. For example, CUDA hardware acceleration may be easier on Debian than on Alpine.
 
 Cons:
 
