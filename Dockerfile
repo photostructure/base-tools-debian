@@ -4,15 +4,9 @@
 # <https://photostructure.com/server/photostructure-for-docker/>
 
 # https://hub.docker.com/_/node/
-FROM node:20.10.0-bookworm-slim as builder
+FROM node:20.11-bookworm-slim as builder
 
 # 202208: We're building libraw and SQLite here to pick up the latest bugfixes.
-
-# We're building static binaries here so we can skip installing the .so
-# dependencies for the PhotoStructure for Docker image. It also allows us to
-# re-use these binaries for the PhotoStructure for Node edition. Binary
-# performance might be fractionally faster if we left these with dynamic
-# links.
 
 # Note that libjpeg62, liblcms2, and liborc dev dependencies are used in the
 # first build stage which starts from this image. By installing them here,
@@ -39,7 +33,7 @@ RUN apt-get update \
   && mkdir -p /opt/photostructure/tools \
   && git clone https://github.com/LibRaw/LibRaw.git /tmp/libraw \
   && cd /tmp/libraw \
-  && git checkout --force 41506ef73e33c5e0c3b94608cce2481d92003d5d \
+  && git checkout --force a4c9b1981ee4ac2a144e7a290988428cc5bb7e85 \
   && autoreconf -fiv \
   && ./configure --prefix=/opt/photostructure/tools \
   && make -j `nproc` \
@@ -50,7 +44,7 @@ RUN apt-get update \
   && rm -rf /tmp/libraw \
   && mkdir -p /tmp/sqlite \
   && cd /tmp/sqlite \
-  && curl https://sqlite.org/2023/sqlite-autoconf-3440200.tar.gz | tar -xz --strip 1 \
+  && curl https://sqlite.org/2024/sqlite-autoconf-3450200.tar.gz | tar -xz --strip 1 \
   && ./configure --enable-static --enable-readline \
   && make -j `nproc` \
   && strip sqlite3 \
