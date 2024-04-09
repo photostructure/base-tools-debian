@@ -37,7 +37,7 @@ RUN apt-get update \
   && cd /tmp/libraw \
   && git checkout --force e58e8e43ae9fb349563c954cd56e922c59e1fde2 \
   && autoreconf -fiv \
-  && ./configure --prefix=/opt/photostructure/tools \
+  && ./configure --enable-static --disable-lcms --disable-openmp \
   && make -j `nproc` \
   && /bin/bash ./libtool --tag=CXX --mode=link g++ -all-static -g -O2 -o bin/dcraw_emu samples/bin_dcraw_emu-dcraw_emu.o lib/libraw.la -ljpeg -lz -lm \
   && /bin/bash ./libtool --tag=CXX --mode=link g++ -all-static -g -O2 -o bin/raw-identify samples/bin_raw_identify-raw-identify.o lib/libraw.la -ljpeg -lz -lm \
