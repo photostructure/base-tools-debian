@@ -4,7 +4,7 @@
 # <https://photostructure.com/server/photostructure-for-docker/>
 
 # https://hub.docker.com/_/node/
-FROM node:20.11-bookworm-slim as builder
+FROM node:20.12.1-bookworm-slim as builder
 
 # 202208: We're building libraw and SQLite here to pick up the latest bugfixes.
 
@@ -14,45 +14,43 @@ FROM node:20.11-bookworm-slim as builder
 
 RUN apt-get update \
   && apt-get upgrade -y \
-  && apt-get install -y \
+  && apt-get install -y --no-install-recommends \
   autoconf \
   autogen \
+  automake \
   build-essential \
+  ca-certificates \
   curl \
   git \
   libjpeg62-turbo-dev \
   liblcms2-dev \
   liborc-0.4-dev \
+  libreadline-dev \
   libtool \
   pkg-config \
   python3 \
-  unzip \
   zlib1g-dev \
   && rm -rf /var/lib/apt/lists/* \
   && npm install --force --location=global npm yarn \
   && mkdir -p /opt/photostructure/tools \
   && git clone https://github.com/LibRaw/LibRaw.git /tmp/libraw \
   && cd /tmp/libraw \
-  && git checkout --force a4c9b1981ee4ac2a144e7a290988428cc5bb7e85 \
+  && git checkout --force e58e8e43ae9fb349563c954cd56e922c59e1fde2 \
   && autoreconf -fiv \
   && ./configure --prefix=/opt/photostructure/tools \
   && make -j `nproc` \
-  && make install \
-  && rm $(find /opt/photostructure/tools -type f | grep -vE "libraw.so|dcraw_emu|raw-identify") \
-  && rmdir -p --ignore-fail-on-non-empty $(find /opt/photostructure/tools -type d) \ 
-  && strip /opt/photostructure/tools/bin/* \
+  && /bin/bash ./libtool --tag=CXX --mode=link g++ -all-static -g -O2 -o bin/dcraw_emu samples/bin_dcraw_emu-dcraw_emu.o lib/libraw.la -ljpeg -lz -lm \
+  && /bin/bash ./libtool --tag=CXX --mode=link g++ -all-static -g -O2 -o bin/raw-identify samples/bin_raw_identify-raw-identify.o lib/libraw.la -ljpeg -lz -lm \
+  && cp -p bin/dcraw_emu bin/raw-identify /opt/photostructure/tools/ \
   && rm -rf /tmp/libraw \
   && mkdir -p /tmp/sqlite \
   && cd /tmp/sqlite \
   && curl https://sqlite.org/2024/sqlite-autoconf-3450200.tar.gz | tar -xz --strip 1 \
-  && ./configure --enable-static --enable-readline \
+  && ./configure --enable-static --disable-shared --enable-readline \
   && make -j `nproc` \
-  && strip sqlite3 \
-  && cp -p sqlite3 /opt/photostructure/tools/bin \
-  && rm -rf /tmp/sqlite
-
-# Note: fully static binaries would be a bit more portable, but installing
-# libjpeg isn't that big of a deal.
+  && cp -p sqlite3 /opt/photostructure/tools/ \
+  && rm -rf /tmp/sqlite \
+  && strip /opt/photostructure/tools/*
 
 # Stripped LibRaw and SQLite binaries should now be sitting in
 # /opt/photostructure/tools/bin.
