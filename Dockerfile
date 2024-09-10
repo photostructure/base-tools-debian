@@ -4,7 +4,7 @@
 # <https://photostructure.com/server/photostructure-for-docker/>
 
 # https://hub.docker.com/_/node/
-FROM node:20.15-bookworm-slim as builder
+FROM node:20.17-bookworm-slim as builder
 
 # 202208: We're building libraw and SQLite here to pick up the latest bugfixes.
 
@@ -35,7 +35,7 @@ RUN apt-get update \
   && mkdir -p /opt/photostructure/tools \
   && git clone https://github.com/LibRaw/LibRaw.git /tmp/libraw \
   && cd /tmp/libraw \
-  && git checkout --force d3cbbd0e9934898eb28e4963ee99b51928e2acaa \
+  && git checkout --force 70f511871e002942d3e6b60c99fe04ce5c0c605b \
   && autoreconf -fiv \
   && ./configure --enable-static --disable-lcms --disable-openmp \
   && make -j `nproc` \
@@ -45,7 +45,7 @@ RUN apt-get update \
   && rm -rf /tmp/libraw \
   && mkdir -p /tmp/sqlite \
   && cd /tmp/sqlite \
-  && curl https://sqlite.org/2024/sqlite-autoconf-3460000.tar.gz | tar -xz --strip 1 \
+  && curl https://sqlite.org/2024/sqlite-autoconf-3460100.tar.gz | tar -xz --strip 1 \
   && ./configure --enable-static --disable-shared --enable-readline \
   && make -j `nproc` \
   && cp -p sqlite3 /opt/photostructure/tools/ \
