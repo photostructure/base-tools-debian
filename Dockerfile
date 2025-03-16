@@ -1,16 +1,22 @@
 # syntax=docker/dockerfile:1
 
 # Howdy, need help? See
-# <https://photostructure.com/server/photostructure-for-docker/>
+# https://photostructure.com/server/photostructure-for-docker/
 
 # https://hub.docker.com/_/node/
-FROM node:20.17-bookworm-slim as builder
+FROM node:22.14-bookworm-slim AS builder
 
 # 202208: We're building libraw and SQLite here to pick up the latest bugfixes.
 
 # Note that libjpeg62, liblcms2, and liborc dev dependencies are used in the
 # first build stage which starts from this image. By installing them here,
 # that stage doesn't need to muck with `apt`.
+
+# 20250315: instead of git, we're using GitHub REST API to download a specific
+# commit of LibRaw. See
+# https://docs.github.com/en/repositories/working-with-files/using-files/downloading-source-code-archives
+# and
+# https://docs.github.com/en/rest/repos/contents?apiVersion=2022-11-28#download-a-repository-archive-tar
 
 RUN apt-get update \
   && apt-get upgrade -y \
@@ -21,7 +27,6 @@ RUN apt-get update \
   build-essential \
   ca-certificates \
   curl \
-  git \
   libjpeg62-turbo-dev \
   liblcms2-dev \
   liborc-0.4-dev \
@@ -33,9 +38,9 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/* \
   && npm install --force --location=global npm yarn \
   && mkdir -p /opt/photostructure/tools \
-  && git clone https://github.com/LibRaw/LibRaw.git /tmp/libraw \
+  && mkdir /tmp/libraw \
   && cd /tmp/libraw \
-  && git checkout --force 70f511871e002942d3e6b60c99fe04ce5c0c605b \
+  && curl -L https://api.github.com/repos/LibRaw/LibRaw/tarball/09bea31181b43e97959ee5452d91e5bc66365f1f | tar -xz --strip 1 \
   && autoreconf -fiv \
   && ./configure --enable-static --disable-lcms --disable-openmp \
   && make -j `nproc` \
@@ -45,7 +50,7 @@ RUN apt-get update \
   && rm -rf /tmp/libraw \
   && mkdir -p /tmp/sqlite \
   && cd /tmp/sqlite \
-  && curl https://sqlite.org/2024/sqlite-autoconf-3460100.tar.gz | tar -xz --strip 1 \
+  && curl https://sqlite.org/2025/sqlite-autoconf-3490100.tar.gz | tar -xz --strip 1 \
   && ./configure --enable-static --disable-shared --enable-readline \
   && make -j `nproc` \
   && cp -p sqlite3 /opt/photostructure/tools/ \
