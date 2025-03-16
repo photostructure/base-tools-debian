@@ -26,7 +26,6 @@ RUN apt-get update \
   automake \
   build-essential \
   ca-certificates \
-  cmake \
   curl \
   libjpeg62-turbo-dev \
   liblcms2-dev \
