@@ -20,12 +20,13 @@ FROM node:22.14-bookworm-slim AS builder
 
 RUN apt-get update \
   && apt-get upgrade -y \
-  && apt-get install -y --no-install-recommends \
+  && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
   autoconf \
   autogen \
   automake \
   build-essential \
   ca-certificates \
+  cmake \
   curl \
   libjpeg62-turbo-dev \
   liblcms2-dev \
@@ -38,7 +39,7 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/* \
   && npm install --force --location=global npm yarn \
   && mkdir -p /opt/photostructure/tools \
-  && mkdir /tmp/libraw \
+  && mkdir -p /tmp/libraw \
   && cd /tmp/libraw \
   && curl -L https://api.github.com/repos/LibRaw/LibRaw/tarball/09bea31181b43e97959ee5452d91e5bc66365f1f | tar -xz --strip 1 \
   && autoreconf -fiv \
