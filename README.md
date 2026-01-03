@@ -20,7 +20,7 @@ Cons:
 
 - The Debian image is 300+ MB larger than the Alpine image
 
-- Alpine has newer versions of many tools. For example, Alpine has FFMpeg 5.1, Debian Bullseye is on 4.3.
+- Alpine typically has newer versions of many tools. For example, Alpine Edge has FFmpeg 8.x while Debian Bookworm ships 5.x.
 
 
 See <https://photostructure.com/server/photostructure-for-docker/> and
