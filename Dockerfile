@@ -4,6 +4,8 @@
 # https://photostructure.com/server/photostructure-for-docker/
 
 # https://hub.docker.com/_/node/
+# We use node:24 (not node:24.x) because native modules use N-API which is
+# ABI-stable across Node versions. This allows automatic security patches.
 FROM node:24-bookworm-slim AS builder
 
 # 202208: We're building libraw and SQLite here to pick up the latest bugfixes.
