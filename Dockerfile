@@ -39,7 +39,7 @@ RUN apt-get update \
   zlib1g-dev \
   && rm -rf /var/lib/apt/lists/* \
   && npm install --force --location=global npm yarn \
-  && mkdir -p /opt/photostructure/tools \
+  && mkdir -p /opt/photostructure/tools/bin \
   && mkdir -p /tmp/libraw \
   && cd /tmp/libraw \
   && curl -L https://api.github.com/repos/LibRaw/LibRaw/tarball/0339685891bd485c3568309aaba369afd29bbacd | tar -xz --strip 1 \
@@ -48,16 +48,16 @@ RUN apt-get update \
   && make -j `nproc` \
   && /bin/bash ./libtool --tag=CXX --mode=link g++ -all-static -g -O2 -o bin/dcraw_emu samples/bin_dcraw_emu-dcraw_emu.o lib/libraw.la -ljpeg -lz -lm \
   && /bin/bash ./libtool --tag=CXX --mode=link g++ -all-static -g -O2 -o bin/raw-identify samples/bin_raw_identify-raw-identify.o lib/libraw.la -ljpeg -lz -lm \
-  && cp -p bin/dcraw_emu bin/raw-identify /opt/photostructure/tools/ \
+  && cp -p bin/dcraw_emu bin/raw-identify /opt/photostructure/tools/bin/ \
   && rm -rf /tmp/libraw \
   && mkdir -p /tmp/sqlite \
   && cd /tmp/sqlite \
   && curl https://sqlite.org/2025/sqlite-autoconf-3510100.tar.gz | tar -xz --strip 1 \
   && ./configure --enable-static --disable-shared --enable-readline \
   && make -j `nproc` \
-  && cp -p sqlite3 /opt/photostructure/tools/ \
+  && cp -p sqlite3 /opt/photostructure/tools/bin/ \
   && rm -rf /tmp/sqlite \
-  && strip /opt/photostructure/tools/*
+  && strip /opt/photostructure/tools/bin/*
 
 # Stripped LibRaw and SQLite binaries should now be sitting in
 # /opt/photostructure/tools/bin.
