@@ -29,6 +29,7 @@ RUN apt-get update \
   build-essential \
   ca-certificates \
   curl \
+  libblkid-dev \
   libjpeg62-turbo-dev \
   liblcms2-dev \
   liborc-0.4-dev \
