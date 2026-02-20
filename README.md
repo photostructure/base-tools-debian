@@ -22,6 +22,5 @@ Cons:
 
 - Alpine typically has newer versions of many tools. For example, Alpine Edge has FFmpeg 8.x while Debian Bookworm ships 5.x.
 
-
 See <https://photostructure.com/server/photostructure-for-docker/> and
 <https://photostructure.com/> for more information.
