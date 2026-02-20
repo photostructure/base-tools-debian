@@ -8,7 +8,9 @@
 # ABI-stable across Node versions. This allows automatic security patches.
 FROM node:24-bookworm-slim AS builder
 
-# 202208: We're building libraw and SQLite here to pick up the latest bugfixes.
+# 20260219: We're building libraw, SQLite, and jpegtran here to pick up the latest
+# bugfixes and provide static binaries for all glibc-based editions of
+# PhotoStructure.
 
 # Note that libjpeg62, liblcms2, and liborc dev dependencies are used in the
 # first build stage which starts from this image. By installing them here,
@@ -28,6 +30,7 @@ RUN apt-get update \
   automake \
   build-essential \
   ca-certificates \
+  cmake \
   curl \
   libblkid-dev \
   libjpeg62-turbo-dev \
@@ -35,6 +38,7 @@ RUN apt-get update \
   liborc-0.4-dev \
   libreadline-dev \
   libtool \
+  nasm \
   pkg-config \
   python3 \
   zlib1g-dev \
@@ -58,7 +62,14 @@ RUN apt-get update \
   && make -j `nproc` \
   && cp -p sqlite3 /opt/photostructure/tools/ \
   && rm -rf /tmp/sqlite \
+  && mkdir -p /tmp/jpegtran \
+  && cd /tmp/jpegtran \
+  && curl -L https://api.github.com/repos/libjpeg-turbo/libjpeg-turbo/tarball/af9c1c268520a29adf98cad5138dafe612b3d318 | tar -xz --strip 1 \
+  && cmake -G "Unix Makefiles" -DENABLE_SHARED=0 -DENABLE_STATIC=1 -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="-static" -DCMAKE_EXE_LINKER_FLAGS="-static" \
+  && make -j $(nproc) jpegtran-static \
+  && cp -p jpegtran-static /opt/photostructure/tools/jpegtran \
+  && rm -rf /tmp/jpegtran \
   && strip /opt/photostructure/tools/*
 
-# Stripped LibRaw and SQLite binaries should now be sitting in
+# Stripped LibRaw, SQLite, and jpegtran binaries should now be sitting in
 # /opt/photostructure/tools/.
