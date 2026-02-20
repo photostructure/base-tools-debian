@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo does
 
-Builds a Debian-based Docker base image (`photostructure/base-tools-debian`) used by PhotoStructure for Docker. The single `Dockerfile` compiles two statically-linked binaries from source — LibRaw and SQLite — and places them in `/opt/photostructure/tools/bin/`. The resulting image is published to both Docker Hub and GHCR as a multi-arch manifest (amd64 + arm64).
+Builds a Debian-based Docker base image (`photostructure/base-tools-debian`) used by PhotoStructure for Docker. The single `Dockerfile` compiles two statically-linked binaries from source — LibRaw and SQLite — and places them in `/opt/photostructure/tools/`. The resulting image is published to both Docker Hub and GHCR as a multi-arch manifest (amd64 + arm64).
 
 ## Common tasks
 
