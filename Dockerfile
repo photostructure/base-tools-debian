@@ -6,9 +6,9 @@
 # https://hub.docker.com/_/node/
 # We use node:24 (not node:24.x) because native modules use N-API which is
 # ABI-stable across Node versions. This allows automatic security patches.
-FROM node:24-bookworm-slim AS builder
+FROM node:24-trixie-slim AS builder
 
-# 20260219: We're building libraw, SQLite, and jpegtran here to pick up the latest
+# 20260414: We're building libraw, SQLite, and jpegtran here to pick up the latest
 # bugfixes and provide static binaries for all glibc-based editions of
 # PhotoStructure.
 
@@ -47,7 +47,7 @@ RUN apt-get update \
   && mkdir -p /opt/photostructure/tools \
   && mkdir -p /tmp/libraw \
   && cd /tmp/libraw \
-  && curl -L https://api.github.com/repos/LibRaw/LibRaw/tarball/ca5d4507ef6f64cbf753fbc40c71773bb697fff9 | tar -xz --strip 1 \
+  && curl -L https://api.github.com/repos/LibRaw/LibRaw/tarball/f74ddd995c5447458f132a5377ca0f4b394dff6e | tar -xz --strip 1 \
   && autoreconf -fiv \
   && ./configure --enable-static --disable-lcms --disable-openmp \
   && make -j `nproc` \
@@ -57,14 +57,14 @@ RUN apt-get update \
   && rm -rf /tmp/libraw \
   && mkdir -p /tmp/sqlite \
   && cd /tmp/sqlite \
-  && curl https://sqlite.org/2026/sqlite-autoconf-3510200.tar.gz | tar -xz --strip 1 \
+  && curl https://sqlite.org/2026/sqlite-autoconf-3530000.tar.gz | tar -xz --strip 1 \
   && ./configure --enable-static --disable-shared --enable-readline \
   && make -j `nproc` \
   && cp -p sqlite3 /opt/photostructure/tools/ \
   && rm -rf /tmp/sqlite \
   && mkdir -p /tmp/jpegtran \
   && cd /tmp/jpegtran \
-  && curl -L https://api.github.com/repos/libjpeg-turbo/libjpeg-turbo/tarball/af9c1c268520a29adf98cad5138dafe612b3d318 | tar -xz --strip 1 \
+  && curl -L https://api.github.com/repos/libjpeg-turbo/libjpeg-turbo/tarball/9217719d3a58633923b096af4c1d50d304768a64 | tar -xz --strip 1 \
   && cmake -G "Unix Makefiles" -DENABLE_SHARED=0 -DENABLE_STATIC=1 -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="-static" -DCMAKE_EXE_LINKER_FLAGS="-static" \
   && make -j $(nproc) jpegtran-static \
   && cp -p jpegtran-static /opt/photostructure/tools/jpegtran \
