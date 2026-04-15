@@ -22,10 +22,11 @@ Always run these before reading versions — sibling clones may be stale.
 ```sh
 cd /home/mrm/src/LibRaw && git fetch --tags --prune && git pull --ff-only
 cd /home/mrm/src/libjpeg-turbo && git fetch --tags --prune && git pull --ff-only
-cd /home/mrm/src/sqlite && git fetch --tags --prune && git pull --ff-only
 ```
 
 If any pull fails (non-fast-forward, dirty tree, missing clone), stop and report to the user — do not proceed blindly.
+
+Do **not** `git pull` `/home/mrm/src/sqlite` — it is a downloaded source tarball, not a git clone. SQLite versions are queried directly from sqlite.org in Step 3.
 
 ### Step 2: Check Node.js LTS
 
@@ -40,7 +41,7 @@ For each dependency, identify the latest upstream version:
 
 - **LibRaw**: In `/home/mrm/src/LibRaw`, run `git log -1 --format="%H %s" origin/master` to get the HEAD SHA. Compare to the SHA in the Dockerfile tarball URL. If different, that's the new pin.
 - **libjpeg-turbo**: In `/home/mrm/src/libjpeg-turbo`, find the newest release tag: `git tag --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -5`. Resolve the tag to a SHA with `git rev-list -n 1 <tag>`. Compare to the Dockerfile SHA.
-- **SQLite**: Fetch https://sqlite.org/chronology.html (or https://sqlite.org/download.html) and find the latest autoconf release. Note both the version (e.g. `3530000`) and the year segment (e.g. `2026`). Compare to the Dockerfile URL.
+- **SQLite**: `/home/mrm/src/sqlite` is a downloaded tarball, not a git clone — ignore it. Query sqlite.org directly: WebFetch https://sqlite.org/chronology.html (or https://sqlite.org/download.html) to find the latest autoconf release. Note both the version (e.g. `3530000`) and the year segment (e.g. `2026`). Compare to the Dockerfile URL.
 
 ### Step 4: Review diffs before bumping
 
