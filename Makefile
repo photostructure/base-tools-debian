@@ -1,4 +1,4 @@
-.PHONY: update-pins validate regression-test chunky-bacon
+.PHONY: update-pins validate regression-test preflight
 
 update-pins:
 	pinact run -u
@@ -16,7 +16,8 @@ validate:
 regression-test: validate
 	./.claude/skills/update/run-regression-test.sh
 
-# Run everything before we do a release -- claude will run the update-pins and
-# regression tests for us.
-chunky-bacon:
+# Every PhotoStructure repo exposes `make preflight`: run everything that should
+# pass before cutting a release. Here that's driven by claude, which runs the
+# update-pins and regression tests for us.
+preflight:
 	claude "/update"

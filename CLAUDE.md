@@ -9,6 +9,7 @@ Builds a Debian-based Docker base image (`photostructure/base-tools-debian`) use
 ## Common tasks
 
 ```sh
+make preflight     # everything that should pass before a release (runs the /update skill)
 make validate      # build the builder stage locally to verify LibRaw + SQLite compile
 make update-pins   # update GitHub Actions SHAs in the workflow via pinact
 ```
