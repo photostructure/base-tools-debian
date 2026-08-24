@@ -47,7 +47,7 @@ RUN apt-get update \
   && mkdir -p /opt/photostructure/tools \
   && mkdir -p /tmp/libraw \
   && cd /tmp/libraw \
-  && curl -L https://api.github.com/repos/LibRaw/LibRaw/tarball/e419de08001de28ae6988ecb22df47e52b9c5eaa | tar -xz --strip 1 \
+  && curl -L https://api.github.com/repos/LibRaw/LibRaw/tarball/df226ea4178ccd74245f4f13c23adddfa01411c9 | tar -xz --strip 1 \
   && autoreconf -fiv \
   && ./configure --enable-static --disable-lcms --disable-openmp \
   && make -j `nproc` \
