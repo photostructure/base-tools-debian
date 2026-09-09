@@ -16,7 +16,7 @@ make update-pins   # update GitHub Actions SHAs in the workflow via pinact
 
 ## CI/CD
 
-Pushes to `main` trigger the GitHub Actions workflow (`.github/workflows/docker-build.yml`), which:
+Pushes, and manual `workflow_dispatch` runs, trigger the GitHub Actions workflow (`.github/workflows/docker-build.yml`), which:
 1. Builds amd64 and arm64 images in parallel (on native runners)
 2. Merges them into a multi-arch manifest and pushes to Docker Hub and GHCR
 
