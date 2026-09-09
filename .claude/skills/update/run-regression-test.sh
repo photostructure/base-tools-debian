@@ -2,8 +2,8 @@
 # A/B regression test for the tools built by the Dockerfile.
 #
 # Runs regression-test.sh against the previously published image and the
-# locally-built one, then diffs the two report trees. An empty diff (beyond
-# versions.txt) means the bump changed no observable behavior.
+# locally-built one, then diffs the two report trees. An empty diff means the
+# bump changed no observable behavior.
 #
 # Usage: ./run-regression-test.sh [new-image] [old-image]
 #
@@ -47,18 +47,11 @@ echo "running old..." && run "$OLD_IMAGE" "$WORK/old"
 echo "running new..." && run "$NEW_IMAGE" "$WORK/new"
 
 echo
-echo "=== versions ==="
-diff "$WORK/old/versions.txt" "$WORK/new/versions.txt" || true
-
-echo
 echo "=== behavioral differences ==="
-# Capture before testing: `diff -rq` exits 1 when files differ, and under
-# `pipefail` that status wins over grep's, so testing the pipeline directly
-# reports "no differences" precisely when there are some.
-differences="$(diff -rq "$WORK/old" "$WORK/new" | grep -v '/versions.txt' || true)"
+differences="$(diff -rq "$WORK/old" "$WORK/new" || true)"
 # Report coverage alongside the verdict: "no differences" over an empty report
 # tree means the test covered nothing, and must not read as a pass.
-compared="$(find "$WORK/new" -type f ! -name versions.txt | wc -l)"
+compared="$(find "$WORK/new" -type f | wc -l)"
 if [ -n "$differences" ]; then
   printf '%s\n' "$differences"
   echo

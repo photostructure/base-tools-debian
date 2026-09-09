@@ -18,13 +18,6 @@ mkdir -p "$OUT/raw-identify" "$OUT/decode" "$OUT/jpegtran"
 
 md5of() { md5sum | cut -d' ' -f1; }
 
-# ---------- versions ----------
-{
-  echo "sqlite3:  $("$TOOLS"/sqlite3 --version | awk '{print $1}')"
-  echo "jpegtran: $("$TOOLS"/jpegtran -version 2>&1 | head -1)"
-  echo "libraw:   $(strings "$TOOLS"/raw-identify | grep -m1 -E '^[0-9]+\.[0-9]+\.[0-9]+(-\w+)?$')"
-} > "$OUT/versions.txt" 2>&1
-
 # ---------- sqlite ----------
 # Exercises the extensions PhotoStructure relies on. A missing module here is
 # only a regression if it's absent from the NEW run and present in the OLD one.
