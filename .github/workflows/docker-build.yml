@@ -1,6 +1,8 @@
 name: Build Docker Images
 
-on: push
+on:
+  push:
+  workflow_dispatch:
 
 env:
   DOCKERHUB_IMAGE: photostructure/base-tools-debian
@@ -32,7 +34,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up Buildx
-        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
 
       - name: Docker meta
         id: meta
@@ -123,7 +125,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Buildx
-        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
 
       - name: Docker meta
         id: meta
@@ -132,8 +134,9 @@ jobs:
           images: |
             ${{ env.DOCKERHUB_IMAGE }}
             ${{ env.GHCR_IMAGE }}
+          # No `type=sha`: the same commit rebuilds to a different image, so that
+          # tag would move under anything pinning it. Downstream pins the digest.
           tags: |
-            type=sha
             type=ref,event=branch
             type=ref,event=tag
             type=raw,value=latest,enable={{is_default_branch}}
