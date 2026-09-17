@@ -16,6 +16,17 @@ FROM node:24-trixie-slim AS builder
 # first build stage which starts from this image. By installing them here,
 # that stage doesn't need to muck with `apt`.
 
+# 20260917: SQLite needs `LDFLAGS=-static` on its own. `--enable-static
+# --disable-shared` govern libsqlite3, not the `sqlite3` shell, so without this
+# the CLI links dynamically against the builder's glibc -- which is trixie's.
+# The binary then imports `fmod@GLIBC_2.38` and fails to start on Debian 12,
+# Ubuntu 22.04 and RHEL 9. The node and Linux desktop editions ship it and run
+# on the user's glibc, so that wedges them: PhotoStructure's
+# `tools-sqlite-version` health check is critical, and a failing critical check
+# gates sync. Docker never saw it, because the runtime image is trixie too.
+# Regressed 20260414 and shipped from v2026.4.7-beta. LibRaw (`-all-static`)
+# and jpegtran (`-DCMAKE_EXE_LINKER_FLAGS=-static`) were already static.
+
 # 20250315: instead of git, we're using GitHub REST API to download a specific
 # commit of LibRaw. See
 # https://docs.github.com/en/repositories/working-with-files/using-files/downloading-source-code-archives
@@ -58,7 +69,7 @@ RUN apt-get update \
   && mkdir -p /tmp/sqlite \
   && cd /tmp/sqlite \
   && curl https://sqlite.org/2026/sqlite-autoconf-3530400.tar.gz | tar -xz --strip 1 \
-  && ./configure --enable-static --disable-shared --enable-readline \
+  && ./configure --enable-static --disable-shared --enable-readline LDFLAGS=-static \
   && make -j `nproc` \
   && cp -p sqlite3 /opt/photostructure/tools/ \
   && rm -rf /tmp/sqlite \
