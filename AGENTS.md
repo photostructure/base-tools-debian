@@ -1,10 +1,6 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## What this repo does
 
-Builds a Debian-based Docker base image (`photostructure/base-tools-debian`) used by PhotoStructure for Docker. The single `Dockerfile` compiles two statically-linked binaries from source — LibRaw and SQLite — and places them in `/opt/photostructure/tools/`. The resulting image is published to both Docker Hub and GHCR as a multi-arch manifest (amd64 + arm64).
+Builds a Debian-based Docker base image (`photostructure/base-tools-debian`) used by PhotoStructure for Docker. The `Dockerfile` compiles static LibRaw tools, SQLite, and jpegtran into `/opt/photostructure/tools/`. SQLite is built in an Alpine stage for a musl-linked CLI to avoid glibc NSS shenanigans; the other tools are built in the Debian stage. The resulting image is published to both Docker Hub and GHCR as a multi-arch manifest (amd64 + arm64).
 
 ## Common tasks
 
@@ -17,6 +13,7 @@ make update-pins   # update GitHub Actions SHAs in the workflow via pinact
 ## CI/CD
 
 Pushes, and manual `workflow_dispatch` runs, trigger the GitHub Actions workflow (`.github/workflows/docker-build.yml`), which:
+
 1. Builds amd64 and arm64 images in parallel (on native runners)
 2. Merges them into a multi-arch manifest and pushes to Docker Hub and GHCR
 
@@ -31,9 +28,12 @@ Pushes, and manual `workflow_dispatch` runs, trigger the GitHub Actions workflow
 ## Updating dependencies
 
 When bumping LibRaw:
+
 1. Validate diffs locally by `git pull`ing in `../LibRaw` and studying `git log <old-sha>..<new-sha> --oneline` and `git diff --stat`
 2. Update the tarball URL in the `Dockerfile` to use the new SHA (not a tag)
 
 When bumping SQLite:
+
 - Update the version number and year segment in the URL (e.g., `/2026/sqlite-autoconf-3XXXXXX.tar.gz`)
+- Update the expected SHA-256 beside the URL to match the new source archive
 - Run `make validate` to confirm it compiles cleanly
